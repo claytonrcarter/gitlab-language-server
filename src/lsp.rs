@@ -128,9 +128,22 @@ impl LanguageServer for Lsp {
                     state.config.project = Some(project.clone());
                 }
                 Some(_) => {
-                    log!(self, WARNING, "[initialize:config] unrecognized value for lsp setting 'project'. Expected string.");
+                    return Err(Error {
+                        code: ErrorCode::ServerError(1),
+                        message:
+                            "Error: invalid configuration param 'project' supplied, expected string"
+                                .into(),
+                        data: None,
+                    })
                 }
-                None => {}
+                None => {
+                    return Err(Error {
+                        code: ErrorCode::ServerError(1),
+                        message: "Error: required configuration param 'project' not supplied"
+                            .into(),
+                        data: None,
+                    })
+                }
             }
         }
         // log_debug!(self, "[initialize:config] {:#?}", state.config);
